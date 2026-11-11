@@ -119,9 +119,103 @@ function Display.Show(spellID)
     end
 end
 
+-- ------------------------------------------
+-- Cura: la vida es secreta, asi que no se compara en Lua. El juego evalua
+-- una curva escalonada (1 por debajo del umbral, 0 por encima) sobre la vida
+-- y el resultado secreto va directo a SetAlpha, que si lo acepta.
+-- ------------------------------------------
+local healCurve, healCurveAt
+local healIcon
+local healGlowing
+
+local function HealCurve()
+    if healCurveAt ~= ns.db.healAt then
+        healCurve = C_CurveUtil.CreateCurve()
+        healCurve:SetType(Enum.LuaCurveType.Step)
+        healCurve:AddPoint(0, 1)
+        healCurve:AddPoint(ns.db.healAt / 100, 0)
+        healCurveAt = ns.db.healAt
+    end
+    return healCurve
+end
+
+local function HealOverlay(button)
+    if not button.RotationGuideHeal then
+        local glow = button:CreateTexture(nil, "OVERLAY", nil, 1)
+        glow:SetTexture("Interface\\Buttons\\CheckButtonHilight")
+        glow:SetBlendMode("ADD")
+        glow:SetVertexColor(1, 0.2, 0.2)
+        glow:SetPoint("TOPLEFT", -6, 6)
+        glow:SetPoint("BOTTOMRIGHT", 6, -6)
+        button.RotationGuideHeal = glow
+    end
+    return button.RotationGuideHeal
+end
+
+local function HealGlow(name, alpha)
+    for _, button in ipairs(buttonsByName[name] or {}) do
+        local glow = HealOverlay(button)
+        if alpha then
+            glow:SetAlpha(alpha)
+            glow:Show()
+        else
+            glow:Hide()
+        end
+    end
+end
+
+-- Icono de cura encima del de rotacion: cuando aparece, lo tapa
+local function CreateHealIcon()
+    healIcon = CreateFrame("Frame", "RotationGuideHealIcon", UIParent)
+    healIcon:SetSize(48, 48)
+    healIcon:SetFrameStrata("HIGH")
+    healIcon:SetFrameLevel(20)
+    healIcon:EnableMouse(false)
+    healIcon.texture = healIcon:CreateTexture(nil, "ARTWORK")
+    healIcon.texture:SetAllPoints()
+    local border = healIcon:CreateTexture(nil, "OVERLAY")
+    border:SetTexture("Interface\\Buttons\\CheckButtonHilight")
+    border:SetBlendMode("ADD")
+    border:SetVertexColor(1, 0.2, 0.2)
+    border:SetPoint("TOPLEFT", -6, 6)
+    border:SetPoint("BOTTOMRIGHT", 6, -6)
+end
+
+-- spellID nil = sin cura lista (o desactivada con /rg heal 0)
+function Display.ShowHeal(spellID)
+    local name = spellID and ns.db.healAt > 0 and C_Spell.GetSpellName(spellID) or nil
+    if not name then
+        if healGlowing then HealGlow(healGlowing, nil) end
+        healGlowing = nil
+        if healIcon then healIcon:Hide() end
+        return
+    end
+    local alpha = UnitHealthPercent("player", true, HealCurve())
+    if healGlowing and healGlowing ~= name then HealGlow(healGlowing, nil) end
+    healGlowing = name
+    if ns.db.glow then HealGlow(name, alpha) end
+    if not ns.db.icon then
+        if healIcon then healIcon:Hide() end
+        return
+    end
+    if not icon then
+        CreateIcon()
+        icon:Hide()
+    end
+    if not healIcon then
+        CreateHealIcon()
+        healIcon:SetPoint("CENTER", icon, "CENTER")
+    end
+    healIcon.texture:SetTexture(C_Spell.GetSpellTexture(spellID))
+    healIcon:SetAlpha(alpha)
+    healIcon:Show()
+end
+
 -- Tras cambiar barras hay que volver a pintar el brillo sobre los botones nuevos
 function Display.Refresh()
     if glowing then Glow(glowing, false) end
     glowing = nil
+    if healGlowing then HealGlow(healGlowing, nil) end
+    healGlowing = nil
     Display.ScanBars()
 end

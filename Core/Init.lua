@@ -11,12 +11,13 @@ local DEFAULTS = {
     icon = true,
     locked = false,
     forceSingle = false,
+    healAt = 40,
     point = { "CENTER", "CENTER", 0, -180 },
 }
 
 local INTERVAL = 0.1
 local Clean = ns.Clean
-local rules
+local rules, heals
 
 local function Print(text)
     print("|cffd597ffRotation Guide|r: " .. text)
@@ -35,21 +36,21 @@ local function DetectSpec()
     return best
 end
 
+-- Una rama de tanque en solitario usa la de dano que indique (spec.solo)
 local function LoadRotation()
     local specs = ns.Rotations[ns.class]
     ns.spec = DetectSpec()
     local spec = specs and specs[ns.spec]
-    rules = spec and spec.rules
     ns.specName = spec and spec.name
+    if spec and spec.solo and not IsInGroup() then
+        spec = specs[spec.solo]
+        ns.specName = ns.specName .. " -> " .. spec.name .. " (solo)"
+    end
+    rules = spec and spec.rules
+    heals = ns.Heals[ns.class] or {}
     ns.State.CacheSpellbook()
-    ns.State.SetTracking(rules and ns.Engine.TrackIndex(rules) or {})
+    ns.State.SetTracking(ns.Engine.TrackIndex(ns.Engine.Join(rules or {}, heals)))
     ns.Display.Refresh()
-end
-
--- Solo con un enemigo seleccionado: fuera de eso no hay rotacion que seguir
-local function HasEnemy()
-    return Clean(UnitExists("target")) and Clean(UnitCanAttack("player", "target"))
-        and not Clean(UnitIsDead("target"))
 end
 
 local elapsed = 0
@@ -58,11 +59,13 @@ ticker:SetScript("OnUpdate", function(_, delta)
     elapsed = elapsed + delta
     if elapsed < INTERVAL then return end
     elapsed = 0
-    local spellID
-    if rules and ns.db.enabled and HasEnemy() then
+    local spellID, healID
+    if rules and ns.db.enabled then
         spellID = ns.Engine.Next(rules, ns.State)
+        healID = ns.db.healAt > 0 and ns.Engine.Next(heals, ns.State, true) or nil
     end
     ns.Display.Show(spellID)
+    ns.Display.ShowHeal(healID)
 end)
 
 local events = CreateFrame("Frame")
@@ -76,6 +79,7 @@ events:RegisterEvent("UPDATE_MACROS")
 events:RegisterEvent("PLAYER_TARGET_CHANGED")
 events:RegisterEvent("PLAYER_REGEN_ENABLED")
 events:RegisterEvent("PLAYER_DEAD")
+events:RegisterEvent("GROUP_ROSTER_UPDATE")
 events:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
 
 events:SetScript("OnEvent", function(_, event, arg1, _, arg3)
@@ -88,7 +92,8 @@ events:SetScript("OnEvent", function(_, event, arg1, _, arg3)
         ns.db = RotationGuideDB
         ns.class = select(2, UnitClass("player"))
     elseif event == "PLAYER_LOGIN" or event == "SPELLS_CHANGED"
-        or event == "CHARACTER_POINTS_CHANGED" or event == "PLAYER_TALENT_UPDATE" then
+        or event == "CHARACTER_POINTS_CHANGED" or event == "PLAYER_TALENT_UPDATE"
+        or event == "GROUP_ROSTER_UPDATE" then
         if ns.db then LoadRotation() end
     elseif event == "ACTIONBAR_SLOT_CHANGED" or event == "UPDATE_MACROS" then
         ns.Display.Refresh()
@@ -114,7 +119,7 @@ end
 SLASH_ROTATIONGUIDE1 = "/rg"
 SLASH_ROTATIONGUIDE2 = "/rotationguide"
 SlashCmdList.ROTATIONGUIDE = function(message)
-    local command = strlower(strtrim(message or ""))
+    local command, value = strlower(strtrim(message or "")):match("^(%S*)%s*(.-)$")
     if command == "" or command == "toggle" then
         Toggle("enabled", L.ON, L.OFF)
     elseif command == "single" then
@@ -131,6 +136,12 @@ SlashCmdList.ROTATIONGUIDE = function(message)
         ns.db.point = { unpack(DEFAULTS.point) }
         ns.Display.PlaceIcon()
         Print(L.RESET)
+    elseif command == "heal" then
+        local percent = tonumber(value)
+        if percent and percent >= 0 and percent <= 100 then
+            ns.db.healAt = math.floor(percent)
+        end
+        Print(ns.db.healAt > 0 and format(L.HEAL_AT, ns.db.healAt) or L.HEAL_OFF)
     elseif command == "status" then
         Print(format(L.STATUS, ns.class or "?", ns.specName or L.NO_ROTATION, ns.State.Targets()))
     else

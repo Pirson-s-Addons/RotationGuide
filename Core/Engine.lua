@@ -23,6 +23,12 @@ local ADDON_NAME, ns = ...
 --   stealth    true: solo en sigilo
 --   lowMana    true: solo con poco mana
 --   ifUnknown  id: solo si el jugador NO conoce ese hechizo
+--   ooc        true: solo fuera de combate (buffs, mascota); el resto de
+--              reglas exige un enemigo seleccionado
+--   elite      true: solo contra elites y jefes (cooldowns grandes)
+--   noPet      true: solo si no hay mascota viva
+--   group      true/false: solo en grupo / solo en solitario
+--   noImbue    true: solo si el arma no tiene encantamiento temporal
 
 local Engine = {}
 ns.Engine = Engine
@@ -47,6 +53,10 @@ end
 
 -- Condiciones baratas primero: las de aura pueden consultar la API varias veces
 local function Passes(rule, S)
+    if rule.elite and not S.Elite() then return false end
+    if rule.noPet and S.HasPet() then return false end
+    if rule.group ~= nil and S.InGroup() ~= rule.group then return false end
+    if rule.noImbue and S.WeaponImbued() then return false end
     if rule.form ~= nil and S.Form() ~= rule.form then return false end
     if rule.notForm ~= nil and S.Form() == rule.notForm then return false end
     if rule.stealth and not S.Stealthed() then return false end
@@ -63,11 +73,18 @@ local function Passes(rule, S)
     return true
 end
 
+-- Fuera de combate solo valen las reglas ooc; en combate, las demas y con
+-- un enemigo seleccionado. ungated salta esa puerta (lista de curas).
+local function Gate(rule, S)
+    if rule.ooc then return not S.InCombat() end
+    return S.HasEnemy()
+end
+
 -- Devuelve el id (rango conocido) del siguiente hechizo y su regla, o nil
-function Engine.Next(rules, S)
+function Engine.Next(rules, S, ungated)
     for _, rule in ipairs(rules) do
         local id = S.Known(rule.spell)
-        if id and S.Ready(id) and Passes(rule, S) then
+        if id and (ungated or Gate(rule, S)) and S.Ready(id) and Passes(rule, S) then
             return id, rule
         end
     end
@@ -87,4 +104,13 @@ function Engine.TrackIndex(rules)
         end
     end
     return index
+end
+
+-- Une varias listas de reglas en una nueva (las listas originales no cambian)
+function Engine.Join(...)
+    local out = {}
+    for i = 1, select("#", ...) do
+        for _, rule in ipairs((select(i, ...))) do table.insert(out, rule) end
+    end
+    return out
 end

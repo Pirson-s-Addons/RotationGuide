@@ -27,4 +27,5 @@ Data/Priest.lua
 Data/Paladin.lua
 Data/Shaman.lua
 Data/Druid.lua
+Core/API.lua
 Core/Init.lua

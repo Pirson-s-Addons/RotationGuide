@@ -268,3 +268,34 @@ function S.Targets()
     targetsAt, targetsCount = now, math.max(count, 1)
     return targetsCount
 end
+
+-- ------------------------------------------
+-- Situacion: combate, enemigo, elite, mascota, grupo, arma
+-- ------------------------------------------
+function S.InCombat()
+    return InCombatLockdown() or Clean(UnitAffectingCombat("player")) == true
+end
+
+function S.HasEnemy()
+    return Clean(UnitExists("target")) and Clean(UnitCanAttack("player", "target"))
+        and not Clean(UnitIsDead("target")) or false
+end
+
+local ELITE = { elite = true, rareelite = true, worldboss = true }
+
+function S.Elite()
+    if ELITE[Clean(UnitClassification("target")) or ""] then return true end
+    return Clean(UnitLevel("target")) == -1  -- calavera: jefe
+end
+
+function S.HasPet()
+    return Clean(UnitExists("pet")) and not Clean(UnitIsDead("pet")) or false
+end
+
+function S.InGroup()
+    return IsInGroup() and true or false
+end
+
+function S.WeaponImbued()
+    return Clean((GetWeaponEnchantInfo())) == true
+end

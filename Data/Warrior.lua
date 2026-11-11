@@ -1,5 +1,6 @@
 local ADDON_NAME, ns = ...
 ns.Rotations = ns.Rotations or {}
+ns.Heals = ns.Heals or {}
 
 -- Formas: 17 Batalla, 18 Defensiva, 19 Rabia.
 -- Ejecutar, Abrumar y Revancha solo son "usables" cuando el juego lo permite
@@ -28,7 +29,7 @@ ns.Rotations.WARRIOR = {
         { spell = 2458, notForm = 19 },                         -- Berserker Stance
         SHOUT,
         { spell = 5308 },                                       -- Execute
-        { spell = 12328 },                                      -- Death Wish
+        { spell = 12328, elite = true },                        -- Death Wish
         { spell = 23881 },                                      -- Bloodthirst
         { spell = 1680 },                                       -- Whirlwind
         { spell = 1310222 },                                    -- Spearing Strike
@@ -38,7 +39,7 @@ ns.Rotations.WARRIOR = {
         { spell = 845, aoe = 2 },                               -- Cleave
         { spell = 78, single = true },                          -- Heroic Strike
     } },
-    [3] = { name = "Protection", rules = {
+    [3] = { name = "Protection", solo = 1, rules = {
         { spell = 71, notForm = 18 },                           -- Defensive Stance
         SHOUT,
         { spell = 23922 },                                      -- Shield Slam
@@ -50,4 +51,10 @@ ns.Rotations.WARRIOR = {
         { spell = 78 },                                         -- Heroic Strike
         { spell = 7386 },                                       -- Sunder Armor (relleno)
     } },
+}
+
+-- Sin curas propias: defensivos cuando la vida baja
+ns.Heals.WARRIOR = {
+    { spell = 12975 },                                          -- Last Stand
+    { spell = 871 },                                            -- Shield Wall
 }

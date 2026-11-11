@@ -1,5 +1,6 @@
 local ADDON_NAME, ns = ...
 ns.Rotations = ns.Rotations or {}
+ns.Heals = ns.Heals or {}
 
 -- Formas: 0 sin forma, 1 gato, 5 oso, 31 lechucico. Cada rama recomienda
 -- segun la forma en la que estas: no te saca de oso para lanzar Fuego estelar.
@@ -35,20 +36,28 @@ local function Caster(form)
     }
 end
 
-local function Join(...)
-    local out = {}
-    for i = 1, select("#", ...) do
-        for _, rule in ipairs((select(i, ...))) do table.insert(out, rule) end
-    end
-    return out
-end
+local Join = ns.Engine.Join
+
+-- Fuera de combate y sin forma: Marca de lo Salvaje y Espinas
+local PREP = {
+    { spell = 1126, ooc = true, form = 0, on = "player", missing = true },  -- Mark of the Wild
+    { spell = 467, ooc = true, form = 0, on = "player", missing = true },   -- Thorns
+}
 
 ns.Rotations.DRUID = {
-    [1] = { name = "Balance", rules = Join(
+    [1] = { name = "Balance", rules = Join(PREP,
         { { spell = 24858, form = 0 } },                        -- Moonkin Form
         Caster(31), Caster(0), CAT, BEAR) },
-    [2] = { name = "Feral", rules = Join(
+    [2] = { name = "Feral", rules = Join(PREP,
         CAT, BEAR,
         { { spell = 768, form = 0 } }) },                       -- Cat Form
-    [3] = { name = "Restoration", rules = Join(Caster(0), CAT, BEAR) },
+    [3] = { name = "Restoration", rules = Join(PREP, Caster(0), CAT, BEAR) },
+}
+
+-- En oso, Regeneracion frenetica; sin forma, las curas normales
+ns.Heals.DRUID = {
+    { spell = 22842, form = 5 },                                -- Frenzied Regeneration
+    { spell = 774, form = 0, on = "player", missing = true, dur = 12 }, -- Rejuvenation
+    { spell = 8936, form = 0 },                                 -- Regrowth
+    { spell = 5185, form = 0 },                                 -- Healing Touch
 }
