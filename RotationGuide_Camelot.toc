@@ -1,0 +1,30 @@
+## Interface: 16001
+## Version: 1.00
+## Author: Pirson
+## Title: |cffd597ffRotation Guide|r
+## Category: Combat
+## Category-esES: Combate
+## Category-esMX: Combate
+## Notes: |cFF33CCFFHighlights the next spell of your rotation on your action bar, for every class and talent tree in WoW Forever.|r
+## Notes-esES: |cFF33CCFFResalta en tu barra de acción el siguiente hechizo de tu rotación, para todas las clases y ramas de talentos de WoW Forever.|r
+## Notes-esMX: |cFF33CCFFResalta en tu barra de acción el siguiente hechizo de tu rotación, para todas las clases y ramas de talentos de WoW Forever.|r
+## SavedVariablesPerCharacter: RotationGuideDB
+
+# Solo WoW Forever: el sufijo _Camelot es el game type que busca ese cliente, y
+# sin un .toc generico ningun otro cliente lista el addon.
+
+Locales/enUS.lua
+Locales/esES.lua
+Core/Engine.lua
+Core/State.lua
+Core/Display.lua
+Data/Warrior.lua
+Data/Rogue.lua
+Data/Hunter.lua
+Data/Mage.lua
+Data/Warlock.lua
+Data/Priest.lua
+Data/Paladin.lua
+Data/Shaman.lua
+Data/Druid.lua
+Core/Init.lua
