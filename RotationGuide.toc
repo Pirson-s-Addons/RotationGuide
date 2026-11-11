@@ -9,6 +9,7 @@
 ## Notes-esES: |cFF33CCFFResalta en tu barra de acción el siguiente hechizo de tu rotación, para todas las clases y ramas de talentos de WoW Forever.|r
 ## Notes-esMX: |cFF33CCFFResalta en tu barra de acción el siguiente hechizo de tu rotación, para todas las clases y ramas de talentos de WoW Forever.|r
 ## SavedVariablesPerCharacter: RotationGuideDB
+## OptionalDeps: SealTimersForever
 
 # Solo WoW Forever: el sufijo _Camelot es el game type que busca ese cliente, y
 # sin un .toc generico ningun otro cliente lista el addon.

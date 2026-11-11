@@ -182,7 +182,20 @@ local function Tracked(id, unit)
     return nil
 end
 
+-- Sellos de paladin: si Seal Timers Forever esta instalado, sabe cual hay puesto
+-- y cuando se acaba aunque el aura sea secreta (cuenta desde el lanzamiento).
+-- true / false si lo sabe; nil si no esta o el nombre no es de un sello.
+local function SealActive(name, unit)
+    local api = SealTimersForeverAPI
+    if unit ~= "player" or type(api) ~= "table" or api.version ~= 1 or not api.IsSeal(name) then return nil end
+    local seal = api.GetActiveSeal()
+    if not seal or seal.name ~= name then return false end
+    return seal.expiresAt == nil or seal.expiresAt > GetTime()
+end
+
 function S.AuraActive(id, unit)
+    local seal = SealActive(NameOf(id), unit)
+    if seal ~= nil then return seal end
     return (ApiAura(id, unit) or Tracked(id, unit)) and true or false
 end
 
