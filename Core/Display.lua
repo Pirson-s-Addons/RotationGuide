@@ -44,6 +44,16 @@ function Display.ScanBars()
             end
         end
     end
+    -- Barra de posturas: auras de paladin, posturas, formas de druida, sigilo
+    for i = 1, 10 do
+        local button = _G["StanceButton" .. i]
+        local id = button and Clean((select(4, GetShapeshiftFormInfo(button:GetID()))))
+        local name = id and C_Spell.GetSpellName(id)
+        if name then
+            buttonsByName[name] = buttonsByName[name] or {}
+            table.insert(buttonsByName[name], button)
+        end
+    end
 end
 
 local function Overlay(button)

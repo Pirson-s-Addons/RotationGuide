@@ -64,6 +64,7 @@ ticker:SetScript("OnUpdate", function(_, delta)
         spellID = ns.Engine.Next(rules, ns.State)
         healID = ns.db.healAt > 0 and ns.Engine.Next(heals, ns.State, true) or nil
     end
+    ns.nextSpell, ns.nextHeal = spellID, healID
     ns.Display.Show(spellID)
     ns.Display.ShowHeal(healID)
 end)
@@ -76,6 +77,7 @@ events:RegisterEvent("CHARACTER_POINTS_CHANGED")
 events:RegisterEvent("PLAYER_TALENT_UPDATE")
 events:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
 events:RegisterEvent("UPDATE_MACROS")
+events:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
 events:RegisterEvent("PLAYER_TARGET_CHANGED")
 events:RegisterEvent("PLAYER_REGEN_ENABLED")
 events:RegisterEvent("PLAYER_DEAD")
@@ -95,7 +97,8 @@ events:SetScript("OnEvent", function(_, event, arg1, _, arg3)
         or event == "CHARACTER_POINTS_CHANGED" or event == "PLAYER_TALENT_UPDATE"
         or event == "GROUP_ROSTER_UPDATE" then
         if ns.db then LoadRotation() end
-    elseif event == "ACTIONBAR_SLOT_CHANGED" or event == "UPDATE_MACROS" then
+    elseif event == "ACTIONBAR_SLOT_CHANGED" or event == "UPDATE_MACROS"
+        or event == "UPDATE_SHAPESHIFT_FORMS" then
         ns.Display.Refresh()
     elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
         ns.State.OnCast(arg3)

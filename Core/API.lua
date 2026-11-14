@@ -79,4 +79,11 @@ RotationGuideAPI = {
     GetPlayerSpec = function()
         return ns.class, ns.spec, ns.specName
     end,
+
+    -- Lo que resalta ahora mismo: spellID de la rotacion, spellID de la cura
+    -- (solo se lista; si hace falta lo decide la vida, que es secreta) y el
+    -- umbral de vida de la cura en % (0 = curas desactivadas). nil = nada.
+    GetNext = function()
+        return ns.nextSpell, ns.nextHeal, ns.db and ns.db.healAt
+    end,
 }

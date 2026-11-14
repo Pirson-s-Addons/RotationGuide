@@ -2,7 +2,7 @@
 
 Highlights the next spell of your rotation on your action bar, for the 9 classes and 27 talent trees of **WoW Forever**.
 
-- Glows the spell on the Blizzard action bars and shows it in a movable icon.
+- Glows the spell on the Blizzard action bars (stance bar included: paladin auras, warrior stances, druid forms, stealth) and shows it in a movable icon.
 - Picks the rotation from the talent tree where you spent the most points.
 - Only suggests spells you know, picking your highest rank.
 - Works around Forever's hidden combat data: it tracks your own DoTs, buffs and totems from your casts.
@@ -28,7 +28,7 @@ Healer trees (Holy, Discipline, Restoration) get a damage rotation for levelling
 
 Resalta en tu barra de acción el siguiente hechizo de tu rotación, para las 9 clases y las 27 ramas de talentos de **WoW Forever**.
 
-- Hace brillar el hechizo en las barras de Blizzard y lo muestra en un icono que puedes mover.
+- Hace brillar el hechizo en las barras de Blizzard (también la de posturas: auras de paladín, posturas de guerrero, formas de druida, sigilo) y lo muestra en un icono que puedes mover.
 - Elige la rotación de la rama de talentos donde tienes más puntos.
 - Solo propone hechizos que conoces, y siempre el rango más alto.
 - Esquiva los datos de combate ocultos de Forever: lleva la cuenta de tus DoTs, buffs y tótems a partir de lo que lanzas.
@@ -51,6 +51,7 @@ if api and api.version == 1 then
     api.GetRotation("PALADIN", 3) -- { { spellID, name, conditions = { missing = {...}, aoe = 2, ... } }, ... }
     api.GetHeals("PALADIN")       -- heals/defensives used when health drops
     api.GetPlayerSpec()           -- class, specIndex, specName
+    api.GetNext()                 -- spellID now highlighted, heal spellID, heal threshold %
 end
 ```
 

@@ -1,5 +1,5 @@
 ## Interface: 16001
-## Version: 1.00
+## Version: 1.01
 ## Author: Pirson
 ## Title: |cffd597ffRotation Guide|r
 ## Category: Combat
