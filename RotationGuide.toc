@@ -1,6 +1,7 @@
 ## Interface: 16001
 ## Version: 1.01
 ## Author: Pirson
+## IconTexture: Interface\AddOns\RotationGuide\img\logo_rg
 ## Title: |cffd597ffRotation Guide|r
 ## Category: Combat
 ## Category-esES: Combate
