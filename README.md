@@ -63,6 +63,6 @@ end
 uv run --no-project --with lupa python -I Tests/run.py
 ```
 
-## License
+---
 
-MIT
+**Author**: Pirson · [GitHub](https://github.com/Pirson-s-Addons) · [CurseForge](https://www.curseforge.com/members/pirson/projects) · MIT License
