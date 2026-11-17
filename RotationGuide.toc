@@ -11,6 +11,12 @@
 ## Notes-esMX: |cFF33CCFFResalta en tu barra de acción el siguiente hechizo de tu rotación, para todas las clases y ramas de talentos de WoW Forever.|r
 ## SavedVariablesPerCharacter: RotationGuideDB
 ## OptionalDeps: SealTimersForever
+## X-Curse-Project-ID: 1806190
+## X-License: MIT
+## X-Copyright: Copyright (c) 2026 Pirson
+## X-Website: https://github.com/Pirson-s-Addons/RotationGuide
+## X-Localizations: enUS, esES, esMX
+## AddonCompartmentFunc: RotationGuide_OnAddonCompartmentClick
 
 # Solo WoW Forever: el sufijo _Camelot es el game type que busca ese cliente, y
 # sin un .toc generico ningun otro cliente lista el addon.

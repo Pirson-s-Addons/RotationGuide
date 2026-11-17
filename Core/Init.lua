@@ -151,3 +151,9 @@ SlashCmdList.ROTATIONGUIDE = function(message)
         Print(L.HELP)
     end
 end
+
+-- Menu de addons del minimapa (## AddonCompartmentFunc del .toc): lo mismo que el comando
+function RotationGuide_OnAddonCompartmentClick()
+    local open = SlashCmdList and SlashCmdList.ROTATIONGUIDE
+    if open then open("") end
+end
