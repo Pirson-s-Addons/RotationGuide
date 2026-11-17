@@ -1,6 +1,20 @@
-# Rotation Guide
+<p align="center"><a href="https://www.curseforge.com/wow/addons/rotation-guide"><img src="https://raw.githubusercontent.com/Pirson-s-Addons/.github/main/profile/assets/readme-rg-en.svg" width="100%" alt="Rotation Guide"/></a></p>
+
+<p align="center"><b>English</b> · <a href="README.es.md">Español</a></p>
+
+<p align="center">
+<a href="https://www.curseforge.com/wow/addons/rotation-guide"><b>CurseForge</b></a> ·
+<a href="https://github.com/Pirson-s-Addons/RotationGuide/releases/latest"><b>Download</b></a>
+</p>
+
+> [!TIP]
+> **Quick start:** just play. The next spell of your rotation glows on your action bar. Type `/rg` to turn it on or off.
+
+## What it does
 
 Highlights the next spell of your rotation on your action bar, for the 9 classes and 27 talent trees of **WoW Forever**.
+
+## Features
 
 - Glows the spell on the Blizzard action bars (stance bar included: paladin auras, warrior stances, druid forms, stealth) and shows it in a movable icon.
 - Picks the rotation from the talent tree where you spent the most points.
@@ -20,26 +34,20 @@ Highlights the next spell of your rotation on your action bar, for the 9 classes
 | `/rg heal 40` | Heal warning threshold in % (`/rg heal 0` turns it off) |
 | `/rg status` | Class, rotation and enemies counted |
 
+## Installation
+
+1. Get it from [CurseForge](https://www.curseforge.com/wow/addons/rotation-guide) or download the zip from the [latest release](https://github.com/Pirson-s-Addons/RotationGuide/releases/latest).
+2. Extract the `RotationGuide` folder into the `Interface/AddOns/` folder of your WoW Forever installation.
+3. Restart WoW and enable the addon.
+
+## Notes
+
 Healer trees (Holy, Discipline, Restoration) get a damage rotation for levelling: heals depend on group health, which is hidden in combat.
 
----
+## For addon authors
 
-## 🇪🇸 Español
-
-Resalta en tu barra de acción el siguiente hechizo de tu rotación, para las 9 clases y las 27 ramas de talentos de **WoW Forever**.
-
-- Hace brillar el hechizo en las barras de Blizzard (también la de posturas: auras de paladín, posturas de guerrero, formas de druida, sigilo) y lo muestra en un icono que puedes mover.
-- Elige la rotación de la rama de talentos donde tienes más puntos.
-- Solo propone hechizos que conoces, y siempre el rango más alto.
-- Esquiva los datos de combate ocultos de Forever: lleva la cuenta de tus DoTs, buffs y tótems a partir de lo que lanzas.
-- **Aviso de cura**: cuando tu vida baja de un umbral (40 % por defecto), tu cura o defensivo propio (Destello de luz, Evasión, Muro de escudo...) tapa el icono y brilla en rojo en tu barra. En Forever la vida está oculta para los addons, así que es el propio juego el que decide cuándo se ve: el addon nunca lee tu vida.
-- **Se adapta a la situación**: buffs largos, encantamientos de arma y mascota antes de pelear; cooldowns grandes guardados para élites y jefes; las ramas de tanque usan la de daño cuando vas solo; tiene en cuenta área, melee/distancia, sigilo y formas.
-
-Comandos: `/rg`, `/rg single`, `/rg icon`, `/rg glow`, `/rg lock`, `/rg reset`, `/rg heal 40`, `/rg status` (ver tabla de arriba).
-
-Las ramas de curación (Sagrado, Disciplina, Restauración) usan una rotación de daño para subir de nivel: las curas dependen de la vida del grupo, que en combate está oculta.
-
-## API for other addons
+<details>
+<summary><b>Public API</b></summary>
 
 Read-only, versioned and always returns copies. Add `## OptionalDeps: RotationGuide` to your TOC.
 
@@ -56,13 +64,16 @@ end
 ```
 
 `conditions` uses the rule fields documented at the top of `Core/Engine.lua`.
+</details>
 
-## Tests
+<details>
+<summary><b>Tests</b></summary>
 
 ```bash
 uv run --no-project --with lupa python -I Tests/run.py
 ```
+</details>
 
----
+<br/>
 
-**Author**: Pirson · [GitHub](https://github.com/Pirson-s-Addons) · [CurseForge](https://www.curseforge.com/members/pirson/projects) · MIT License
+<p align="center"><a href="https://github.com/Pirson-s-Addons"><img src="https://raw.githubusercontent.com/Pirson-s-Addons/.github/main/profile/assets/readme-footer-en.svg" width="100%" alt="Part of Pirson's Addons. See all addons."/></a></p>
