@@ -15,6 +15,7 @@ local ADDON_NAME, ns = ...
 --   dur, max   duracion y stacks maximos del aura, para el rastreo propio
 --   missing    true: el aura no esta; o lista de ids: no esta ninguna
 --   has        id de aura (proc) que debe estar activa en el jugador
+--   hasStacks  n: el aura de has con al menos n stacks
 --   stacksBelow n: menos de n stacks del aura
 --   cp         puntos de combo minimos
 --   aoe        minimo de enemigos; single = true: menos de 2
@@ -69,6 +70,7 @@ local function Passes(rule, S)
     if rule.ifUnknown and S.Known(rule.ifUnknown) then return false end
     if rule.missing and not Missing(rule, S) then return false end
     if rule.has and not S.AuraActive(rule.has, "player") then return false end
+    if rule.hasStacks and S.Stacks(rule.has, "player") < rule.hasStacks then return false end
     if rule.stacksBelow and S.Stacks(AuraOf(rule), UnitOf(rule)) >= rule.stacksBelow then return false end
     return true
 end
@@ -97,10 +99,18 @@ function Engine.TrackIndex(rules)
     local index = {}
     for _, rule in ipairs(rules) do
         if rule.dur then
-            index[rule.spell] = index[rule.spell] or {}
-            table.insert(index[rule.spell], {
-                aura = AuraOf(rule), on = UnitOf(rule), dur = rule.dur, max = rule.max or 1,
-            })
+            local entries = index[rule.spell] or {}
+            index[rule.spell] = entries
+            -- La misma aura repetida (p. ej. oso y oso temible) sumaria 2 stacks por cast
+            local seen = false
+            for _, entry in ipairs(entries) do
+                if entry.aura == AuraOf(rule) and entry.on == UnitOf(rule) then seen = true end
+            end
+            if not seen then
+                table.insert(entries, {
+                    aura = AuraOf(rule), on = UnitOf(rule), dur = rule.dur, max = rule.max or 1,
+                })
+            end
         end
     end
     return index

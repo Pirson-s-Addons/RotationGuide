@@ -5,6 +5,7 @@ local ns = {}
 local function load(path) assert(loadfile(path))("RotationGuide", ns) end
 
 load("Core/Engine.lua")
+load("Core/Custom.lua")
 for _, class in ipairs({ "Warrior", "Rogue", "Hunter", "Mage", "Warlock", "Priest", "Paladin", "Shaman", "Druid" }) do
     load("Data/" .. class .. ".lua")
 end
@@ -15,7 +16,7 @@ local function check(ok, text)
 end
 
 -- 1) Datos: 9 clases x 3 ramas, reglas con spell numerico y campos conocidos
-local FIELDS = { spell = 1, aura = 1, on = 1, dur = 1, max = 1, missing = 1, has = 1, stacksBelow = 1,
+local FIELDS = { spell = 1, aura = 1, on = 1, dur = 1, max = 1, missing = 1, has = 1, hasStacks = 1, stacksBelow = 1,
     cp = 1, aoe = 1, single = 1, melee = 1, form = 1, notForm = 1, stealth = 1, lowMana = 1, ifUnknown = 1,
     ooc = 1, elite = 1, noPet = 1, group = 1, noImbue = 1 }
 local function CheckRule(rule, where)
@@ -85,6 +86,8 @@ check(Next({ { spell = 1, melee = false }, { spell = 2 } }, State({ melee = nil 
 check(Next({ { spell = 1, aoe = 2 }, { spell = 2, single = true } }, State({ targets = 3 })) == 1, "aoe con 3 enemigos")
 check(Next({ { spell = 1, missing = { 7, 8 } }, { spell = 2 } }, State({ auras = { [8] = true } })) == 2, "missing de lista")
 check(Next({ { spell = 1, ifUnknown = 2 }, { spell = 3 } }, State()) == 3, "ifUnknown con el hechizo conocido")
+check(Next({ { spell = 1, has = 9, hasStacks = 3 }, { spell = 2 } }, State({ auras = { [9] = true }, stacks = { [9] = 2 } })) == 2, "hasStacks sin llegar")
+check(Next({ { spell = 1, has = 9, hasStacks = 3 }, { spell = 2 } }, State({ auras = { [9] = true }, stacks = { [9] = 3 } })) == 1, "hasStacks lleno")
 check(Next({ { spell = 1, stacksBelow = 5, dur = 1 }, { spell = 2 } }, State({ stacks = { [1] = 5 } })) == 2, "stacksBelow lleno")
 
 -- Situaciones
@@ -102,6 +105,37 @@ check(Next({ { spell = 1 } }, State({ enemy = false }), true) == 1, "ungated: la
 -- TrackIndex: una entrada por regla con dur, aura por defecto el propio spell
 local index = ns.Engine.TrackIndex({ { spell = 9, dur = 5 }, { spell = 9, aura = 4, dur = 3, max = 5, on = "player" }, { spell = 6 } })
 check(#index[9] == 2 and index[9][1].aura == 9 and index[9][2].max == 5 and index[6] == nil, "TrackIndex")
+check(#ns.Engine.TrackIndex({ { spell = 9, dur = 5, max = 5 }, { spell = 9, dur = 5, max = 5 } })[9] == 1, "TrackIndex: aura repetida una sola vez")
+
+-- Rotaciones del jugador: exportar e importar ida y vuelta, y textos malos
+local Custom = ns.Custom
+local function Same(a, b)
+    if type(a) ~= "table" or type(b) ~= "table" then return a == b end
+    for k, v in pairs(a) do if not Same(v, b[k]) then return false end end
+    for k in pairs(b) do if a[k] == nil then return false end end
+    return true
+end
+for class, list in pairs(ns.Rotations) do
+    for index, spec in ipairs(list) do
+        local text = Custom.Encode(class, index, "Perfil de " .. spec.name, spec.rules)
+        local c, i, rules, name = Custom.Decode(text)
+        check(c == class and i == index and Same(rules, spec.rules) and name == "Perfil de " .. spec.name,
+            "Custom: ida y vuelta " .. class .. " " .. index)
+    end
+end
+local _, _, spaced, spacedName = Custom.Decode(" RG1:PRIEST:3: Juan  el\nbueno :589, dur=18 ,missing=y;\n 8092 ")
+check(spaced and spaced[1].dur == 18 and spaced[2].spell == 8092 and spacedName == "Juan el bueno", "Custom: espacios y nombre")
+check(Custom.Encode("PRIEST", 3, "a|cff:b;c", {}) == "RG1:PRIEST:3:acffbc:", "Custom: nombre sin separadores")
+local _, _, parsed = Custom.Decode("RG1:WARLOCK:1::980,missing=980/603,melee=n,on=player")
+check(parsed and parsed[1].missing[2] == 603 and parsed[1].melee == false and parsed[1].on == "player", "Custom: lista, false y texto")
+for _, bad in ipairs({ "", "hola", "RG1:PRIEST:4:589", "RG1:PRIEST:3:", "RG1:PRIEST:3:abc",
+    "RG1:PRIEST:3:589,foo=1", "RG1:PRIEST:3:589,dur=-1", "RG1:PRIEST:3:589,on=focus",
+    "RG1:PRIEST:3:589,elite=1", "RG1:PRIEST:3:589,dur=inf", "RG1:PRIEST:3:" .. string.rep("1;", 81) }) do
+    check(Custom.Decode((bad:gsub("^(RG1:%u+:%d:)", "%1x:"))) == nil, "Custom: deberia rechazar '" .. bad:sub(1, 30) .. "'")
+end
+check(Custom.Decode("RG1:PRIEST:3:" .. string.rep("n", 65) .. ":589") == nil, "Custom: nombre demasiado largo")
+local copy = Custom.CopyRules({ { spell = 1, missing = { 2 } } })
+check(copy[1].missing[1] == 2, "Custom: copia")
 
 -- API publica: copias, no los datos internos
 ns.State = { NameOf = function(id) return "spell" .. id end }
@@ -115,7 +149,7 @@ if type(ret[1].conditions.missing) == "table" then ret[1].conditions.missing[1] 
 local again = api.GetRotation("PALADIN", 3)
 check(again[1].conditions.dur ~= 999 and again[1].conditions.missing[1] ~= 0, "API: devuelve copias")
 check(api.GetSpecs("WARRIOR")[3].solo == 1 and api.GetRotation("NOPE", 1) == nil, "API: specs y clase inexistente")
-check(#api.GetHeals("PRIEST") == 3, "API: curas")
+check(#api.GetHeals("PRIEST") == 4, "API: curas")
 
 print(fails == 0 and ("ENGINE OK (" .. specs .. " ramas)") or (fails .. " fallos"))
 os.exit(fails == 0 and 0 or 1)

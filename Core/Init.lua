@@ -23,17 +23,43 @@ local function Print(text)
     print("|cffd597ffRotation Guide|r: " .. text)
 end
 
+-- Puntos en una rama sumando el rango de cada talento: GetTalentInfo devuelve
+-- el rango en 5ª posicion en todos los clientes clasicos, mientras que la
+-- posicion de los puntos en GetTalentTabInfo / GetSpecializationInfo cambia
+-- segun la version (y alguna los da como texto o no los da): eso hacia que
+-- Sombras se detectara como Disciplina.
+local function TabPoints(tab)
+    local total = 0
+    local okCount, count = pcall(GetNumTalents, tab)
+    count = okCount and tonumber(Clean(count)) or 0
+    for index = 1, count do
+        local ok, _, _, _, _, rank = pcall(GetTalentInfo, tab, index)
+        total = total + (ok and tonumber(Clean(rank)) or 0)
+    end
+    if total > 0 then return total end
+    -- Plan B: la API de especializaciones (puntos en 7ª posicion)
+    local ok, _, _, _, _, _, _, points = pcall(C_SpecializationInfo.GetSpecializationInfo, tab)
+    return ok and tonumber(Clean(points)) or 0
+end
+ns.TabPoints = TabPoints
+
 -- La rama de talentos con mas puntos; sin puntos (nivel bajo), la primera
 local function DetectSpec()
     local best, bestPoints = 1, 0
     for index = 1, 3 do
-        local ok, _, _, _, _, _, _, points = pcall(C_SpecializationInfo.GetSpecializationInfo, index)
-        points = ok and Clean(points)
-        if points and points > bestPoints then
+        local points = TabPoints(index)
+        if points > bestPoints then
             best, bestPoints = index, points
         end
     end
     return best
+end
+
+-- El perfil propio en uso para esa rama (nil = la recomendada o perfil vacio)
+local function CustomProfile(index)
+    local custom = ns.db.custom[index]
+    local profile = custom and custom.active and custom.profiles[custom.active]
+    return profile and #profile.rules > 0 and profile or nil
 end
 
 -- Una rama de tanque en solitario usa la de dano que indique (spec.solo)
@@ -42,16 +68,23 @@ local function LoadRotation()
     ns.spec = DetectSpec()
     local spec = specs and specs[ns.spec]
     ns.specName = spec and spec.name
-    if spec and spec.solo and not IsInGroup() then
-        spec = specs[spec.solo]
-        ns.specName = ns.specName .. " -> " .. spec.name .. " (solo)"
+    local profile = CustomProfile(ns.spec)
+    rules = profile and profile.rules
+    if profile then
+        ns.specName = (ns.specName or "?") .. " (" .. format(L.PROFILE_IN_USE, profile.name) .. ")"
+    else
+        if spec and spec.solo and not IsInGroup() then
+            spec = specs[spec.solo]
+            ns.specName = ns.specName .. " -> " .. spec.name .. " (solo)"
+        end
+        rules = spec and spec.rules
     end
-    rules = spec and spec.rules
     heals = ns.Heals[ns.class] or {}
     ns.State.CacheSpellbook()
     ns.State.SetTracking(ns.Engine.TrackIndex(ns.Engine.Join(rules or {}, heals)))
     ns.Display.Refresh()
 end
+ns.LoadRotation = LoadRotation
 
 local elapsed = 0
 local ticker = CreateFrame("Frame")
@@ -91,6 +124,8 @@ events:SetScript("OnEvent", function(_, event, arg1, _, arg3)
         for key, value in pairs(DEFAULTS) do
             if RotationGuideDB[key] == nil then RotationGuideDB[key] = value end
         end
+        -- Tabla propia: DEFAULTS no puede repartir la misma tabla entre personajes
+        RotationGuideDB.custom = RotationGuideDB.custom or {}
         ns.db = RotationGuideDB
         ns.class = select(2, UnitClass("player"))
     elseif event == "PLAYER_LOGIN" or event == "SPELLS_CHANGED"
@@ -145,8 +180,11 @@ SlashCmdList.ROTATIONGUIDE = function(message)
             ns.db.healAt = math.floor(percent)
         end
         Print(ns.db.healAt > 0 and format(L.HEAL_AT, ns.db.healAt) or L.HEAL_OFF)
+    elseif command == "editor" or command == "config" then
+        ns.Editor.Open()
     elseif command == "status" then
-        Print(format(L.STATUS, ns.class or "?", ns.specName or L.NO_ROTATION, ns.State.Targets()))
+        local points = ns.TabPoints(1) .. "/" .. ns.TabPoints(2) .. "/" .. ns.TabPoints(3)
+        Print(format(L.STATUS, ns.class or "?", ns.specName or L.NO_ROTATION, points, ns.State.Targets()))
     else
         Print(L.HELP)
     end

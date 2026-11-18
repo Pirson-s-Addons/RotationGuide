@@ -18,6 +18,7 @@
 Locales/enUS.lua
 Locales/esES.lua
 Core/Engine.lua
+Core/Custom.lua
 Core/State.lua
 Core/Display.lua
 Data/Warrior.lua
@@ -30,4 +31,5 @@ Data/Paladin.lua
 Data/Shaman.lua
 Data/Druid.lua
 Core/API.lua
+UI/Editor.lua
 Core/Init.lua

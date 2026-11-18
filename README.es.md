@@ -18,6 +18,7 @@ Resalta en tu barra de acción el siguiente hechizo de tu rotación, para las 9 
 
 - Hace brillar el hechizo en las barras de Blizzard (también la de posturas: auras de paladín, posturas de guerrero, formas de druida, sigilo) y lo muestra en un icono que puedes mover.
 - Elige la rotación de la rama de talentos donde tienes más puntos.
+- **Tu propia rotación**: en *Opciones > AddOns > Rotation Guide* (o `/rg editor`) creas perfiles por rama con los hechizos de tu libro, los ordenas y eliges cuándo se usa cada uno. **Exportar** te da un código para compartirlo; **Importar** guarda el de un amigo como un perfil nuevo sin tocar el tuyo, y cambias de perfil cuando quieras.
 - Solo propone hechizos que conoces, y siempre el rango más alto.
 - Esquiva los datos de combate ocultos de Forever: lleva la cuenta de tus DoTs, buffs y tótems a partir de lo que lanzas.
 - **Aviso de cura**: cuando tu vida baja de un umbral (40 % por defecto), tu cura o defensivo propio (Destello de luz, Evasión, Muro de escudo...) tapa el icono y brilla en rojo en tu barra. En Forever la vida está oculta para los addons, así que es el propio juego el que decide cuándo se ve: el addon nunca lee tu vida.
@@ -32,7 +33,8 @@ Resalta en tu barra de acción el siguiente hechizo de tu rotación, para las 9 
 | `/rg icon` · `/rg glow` | Muestra / oculta el icono o el brillo de la barra |
 | `/rg lock` · `/rg reset` | Bloquea el icono (Mayús + arrastrar lo mueve) / lo devuelve a su sitio |
 | `/rg heal 40` | Umbral del aviso de cura en % (`/rg heal 0` lo desactiva) |
-| `/rg status` | Clase, rotación y enemigos contados |
+| `/rg status` | Clase, rotación, puntos por rama y enemigos contados |
+| `/rg editor` | Abre el editor de rotaciones y perfiles |
 
 ## Instalación
 
