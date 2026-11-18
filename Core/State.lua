@@ -45,6 +45,14 @@ function S.CacheSpellbook()
     end
 end
 
+-- Hechizos del libro (rango mas alto), ordenados por nombre: para el editor
+function S.BookSpells()
+    local list = {}
+    for name, id in pairs(bookByName) do table.insert(list, { id = id, name = name }) end
+    table.sort(list, function(a, b) return a.name < b.name end)
+    return list
+end
+
 local nameCache = {}
 local function NameOf(id)
     local name = nameCache[id]

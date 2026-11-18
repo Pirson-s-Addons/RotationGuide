@@ -13,7 +13,7 @@ for path in sorted(glob.glob("**/*.lua", recursive=True)):
     if isinstance(result, tuple):
         print(result[1])
         bad += 1
-print("SYNTAX OK" if bad == 0 else f"{bad} ficheros con errores")
+print("SYNTAX OK" if bad == 0 else f"{bad} ficheros con errores", flush=True)  # os.exit de Lua no vacia el buffer de Python
 if bad:
     sys.exit(1)
 
