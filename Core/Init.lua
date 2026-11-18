@@ -14,6 +14,7 @@ local DEFAULTS = {
     healAt = 40,
     point = { "CENTER", "CENTER", 0, -180 },
 }
+ns.DEFAULTS = DEFAULTS
 
 local INTERVAL = 0.1
 local Clean = ns.Clean
@@ -28,7 +29,32 @@ end
 -- posicion de los puntos en GetTalentTabInfo / GetSpecializationInfo cambia
 -- segun la version (y alguna los da como texto o no los da): eso hacia que
 -- Sombras se detectara como Disciplina.
+-- WoW Forever: los talentos son un arbol C_Traits y cada rama es un grupo del
+-- arbol con sus puntos gastados (lo mismo que pinta la ventana de talentos).
+-- Devuelve los puntos de la rama o nil si el cliente no lo soporta.
+local function TraitPoints(tab)
+    if not (C_Traits and C_Traits.GetGroupDisplayInfoByTreeID and C_SpecializationInfo
+        and C_SpecializationInfo.GetCombatConfigIDForSpecGroup) then return nil end
+    local ok, points = pcall(function()
+        local configID = C_SpecializationInfo.GetCombatConfigIDForSpecGroup(
+            C_SpecializationInfo.GetActiveSpecGroup())
+        local config = configID and C_Traits.GetConfigInfo(configID)
+        local treeID = config and config.treeIDs and config.treeIDs[1]
+        if not treeID then return nil end
+        local groups = C_Traits.GetGroupDisplayInfoByTreeID(treeID)
+        table.sort(groups, function(a, b) return a.orderIndex < b.orderIndex end)
+        local group = groups[tab]
+        if not group then return nil end
+        local info = C_Traits.GetGroupCurrencyInfo(configID, { group.groupID })[1]
+        local currency = info and info.currencyInfos and info.currencyInfos[1]
+        return currency and tonumber(Clean(currency.spent)) or 0
+    end)
+    return ok and points or nil
+end
+
 local function TabPoints(tab)
+    local traits = TraitPoints(tab)
+    if traits then return traits end
     local total = 0
     local okCount, count = pcall(GetNumTalents, tab)
     count = okCount and tonumber(Clean(count)) or 0
@@ -108,6 +134,7 @@ events:RegisterEvent("PLAYER_LOGIN")
 events:RegisterEvent("SPELLS_CHANGED")
 events:RegisterEvent("CHARACTER_POINTS_CHANGED")
 events:RegisterEvent("PLAYER_TALENT_UPDATE")
+events:RegisterEvent("TRAIT_CONFIG_UPDATED")
 events:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
 events:RegisterEvent("UPDATE_MACROS")
 events:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
@@ -130,6 +157,7 @@ events:SetScript("OnEvent", function(_, event, arg1, _, arg3)
         ns.class = select(2, UnitClass("player"))
     elseif event == "PLAYER_LOGIN" or event == "SPELLS_CHANGED"
         or event == "CHARACTER_POINTS_CHANGED" or event == "PLAYER_TALENT_UPDATE"
+        or event == "TRAIT_CONFIG_UPDATED"
         or event == "GROUP_ROSTER_UPDATE" then
         if ns.db then LoadRotation() end
     elseif event == "ACTIONBAR_SLOT_CHANGED" or event == "UPDATE_MACROS"
@@ -158,7 +186,9 @@ SLASH_ROTATIONGUIDE1 = "/rg"
 SLASH_ROTATIONGUIDE2 = "/rotationguide"
 SlashCmdList.ROTATIONGUIDE = function(message)
     local command, value = strlower(strtrim(message or "")):match("^(%S*)%s*(.-)$")
-    if command == "" or command == "toggle" then
+    if command == "" or command == "config" then
+        ns.OpenOptions()
+    elseif command == "toggle" then
         Toggle("enabled", L.ON, L.OFF)
     elseif command == "single" then
         Toggle("forceSingle", L.SINGLE_ON, L.SINGLE_OFF)
@@ -180,7 +210,7 @@ SlashCmdList.ROTATIONGUIDE = function(message)
             ns.db.healAt = math.floor(percent)
         end
         Print(ns.db.healAt > 0 and format(L.HEAL_AT, ns.db.healAt) or L.HEAL_OFF)
-    elseif command == "editor" or command == "config" then
+    elseif command == "editor" then
         ns.Editor.Open()
     elseif command == "status" then
         local points = ns.TabPoints(1) .. "/" .. ns.TabPoints(2) .. "/" .. ns.TabPoints(3)

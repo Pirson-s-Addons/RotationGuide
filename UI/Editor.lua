@@ -220,6 +220,8 @@ local function Column(title)
     Backdrop(box)
     box.title = Label(box, title, "GameFontNormal")
     box.title:SetPoint("BOTTOMLEFT", box, "TOPLEFT", 4, 4)
+    box.title:SetPoint("RIGHT", box, "RIGHT", -4, 0)
+    box.title:SetWordWrap(false)
     return box
 end
 
@@ -492,7 +494,7 @@ end
 -- Construccion del panel
 -- ------------------------------------------
 local function BuildHeader()
-    local title = Label(panel, "|cffd597ffRotation Guide|r  ·  " .. L.EDITOR_TITLE, "GameFontNormalLarge")
+    local title = Label(panel, L.EDITOR_TITLE, "GameFontNormalLarge")
     title:SetPoint("TOPLEFT", 16, -16)
     local help = Label(panel, L.EDITOR_HELP)
     help:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -6)
@@ -877,28 +879,9 @@ panel:SetScript("OnHide", function()
     if menu then menu:Hide() end
 end)
 
-if Settings and Settings.RegisterCanvasLayoutCategory then
-    category = Settings.RegisterCanvasLayoutCategory(panel, "Rotation Guide")
-    Settings.RegisterAddOnCategory(category)
-else
-    panel:SetSize(780, 600)
-    panel:SetPoint("CENTER")
-    panel:SetFrameStrata("DIALOG")
-    panel:SetMovable(true)
-    panel:EnableMouse(true)
-    panel:RegisterForDrag("LeftButton")
-    panel:SetScript("OnDragStart", panel.StartMoving)
-    panel:SetScript("OnDragStop", panel.StopMovingOrSizing)
-    Backdrop(panel, 0.95)
-    local close = CreateFrame("Button", nil, panel, "UIPanelCloseButton")
-    close:SetPoint("TOPRIGHT", -2, -2)
-    table.insert(UISpecialFrames, "RotationGuideEditor")
-end
+-- Subcategoria de la raiz "Acerca de" (UI/Options.lua)
+category = Settings.RegisterCanvasLayoutSubcategory(ns.rootCategory, panel, L.EDITOR_TITLE)
 
 function Editor.Open()
-    if category then
-        Settings.OpenToCategory(category:GetID())
-    else
-        panel:Show()
-    end
+    Settings.OpenToCategory(category:GetID())
 end

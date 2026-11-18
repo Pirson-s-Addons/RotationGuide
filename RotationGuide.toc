@@ -1,5 +1,5 @@
 ## Interface: 16001
-## Version: 1.02
+## Version: 1.03
 ## Author: Pirson
 ## IconTexture: Interface\AddOns\RotationGuide\img\logo_rg
 ## Title: |cffd597ffRotation Guide|r
@@ -37,5 +37,7 @@ Data/Paladin.lua
 Data/Shaman.lua
 Data/Druid.lua
 Core/API.lua
+UI/About.lua
+UI/Options.lua
 UI/Editor.lua
 Core/Init.lua

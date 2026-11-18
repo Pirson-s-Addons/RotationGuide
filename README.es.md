@@ -8,7 +8,7 @@
 </p>
 
 > [!TIP]
-> **Inicio rápido:** solo juega. El siguiente hechizo de tu rotación brilla en tu barra de acción. Escribe `/rg` para activarlo o desactivarlo.
+> **Inicio rápido:** solo juega. El siguiente hechizo de tu rotación brilla en tu barra de acción. Escribe `/rg` para abrir sus opciones.
 
 ## Qué hace
 
@@ -18,7 +18,7 @@ Resalta en tu barra de acción el siguiente hechizo de tu rotación, para las 9 
 
 - Hace brillar el hechizo en las barras de Blizzard (también la de posturas: auras de paladín, posturas de guerrero, formas de druida, sigilo) y lo muestra en un icono que puedes mover.
 - Elige la rotación de la rama de talentos donde tienes más puntos.
-- **Tu propia rotación**: en *Opciones > AddOns > Rotation Guide* (o `/rg editor`) creas perfiles por rama con los hechizos de tu libro, los ordenas y eliges cuándo se usa cada uno. **Exportar** te da un código para compartirlo; **Importar** guarda el de un amigo como un perfil nuevo sin tocar el tuyo, y cambias de perfil cuando quieras.
+- **Tu propia rotación**: en *Opciones > AddOns > Rotation Guide > Mi rotación* (o `/rg editor`) creas perfiles por rama con los hechizos de tu libro, los ordenas y eliges cuándo se usa cada uno. **Exportar** te da un código para compartirlo; **Importar** guarda el de un amigo como un perfil nuevo sin tocar el tuyo, y cambias de perfil cuando quieras.
 - Solo propone hechizos que conoces, y siempre el rango más alto.
 - Esquiva los datos de combate ocultos de Forever: lleva la cuenta de tus DoTs, buffs y tótems a partir de lo que lanzas.
 - **Aviso de cura**: cuando tu vida baja de un umbral (40 % por defecto), tu cura o defensivo propio (Destello de luz, Evasión, Muro de escudo...) tapa el icono y brilla en rojo en tu barra. En Forever la vida está oculta para los addons, así que es el propio juego el que decide cuándo se ve: el addon nunca lee tu vida.
@@ -28,7 +28,8 @@ Resalta en tu barra de acción el siguiente hechizo de tu rotación, para las 9 
 
 | Comando | Qué hace |
 |---|---|
-| `/rg` | Activa / desactiva |
+| `/rg` | Abre las opciones |
+| `/rg toggle` | Activa / desactiva |
 | `/rg single` | Fuerza un solo objetivo (ignora las reglas de área) |
 | `/rg icon` · `/rg glow` | Muestra / oculta el icono o el brillo de la barra |
 | `/rg lock` · `/rg reset` | Bloquea el icono (Mayús + arrastrar lo mueve) / lo devuelve a su sitio |
