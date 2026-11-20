@@ -145,3 +145,12 @@ L.CMD_SINGLE = "Forces single target on or off"
 L.CMD_HEAL = "Heal warning threshold (0 = off)"
 L.CMD_RESET = "Puts the icon back in its place"
 L.CMD_STATUS = "Class, rotation and talent points detected"
+
+-- Navegacion con mando (UI/GamepadNav.lua)
+L["PAD_MOVE"] = "Move"
+L["PAD_SELECT"] = "Select"
+L["PAD_TOGGLE"] = "Tick"
+L["PAD_CLOSE"] = "Close"
+L["PAD_BACK"] = "Back"
+L["PAD_CLOSE_MENU"] = "Close menu"
+L["PAD_SCROLL"] = "Scroll"

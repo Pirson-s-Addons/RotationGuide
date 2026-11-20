@@ -415,6 +415,7 @@ local function CreateShare()
     share:EnableMouse(true)
     Backdrop(share, 0.97)
     table.insert(UISpecialFrames, "RotationGuideShare")  -- Esc la cierra
+    ns.GamepadNavFor(share) -- con mando, sus botones son de la ventana (UI/GamepadNav.lua)
 
     share.title = Label(share, "", "GameFontNormalLarge")
     share.title:SetPoint("TOPLEFT", 16, -14)

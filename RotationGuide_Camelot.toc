@@ -1,5 +1,5 @@
 ## Interface: 16001
-## Version: 1.03
+## Version: 1.04
 ## Author: Pirson
 ## IconTexture: Interface\AddOns\RotationGuide\img\logo_rg
 ## Title: |cffd597ffRotation Guide|r
@@ -23,6 +23,7 @@
 
 Locales/enUS.lua
 Locales/esES.lua
+UI/GamepadNav.lua
 Core/Engine.lua
 Core/Custom.lua
 Core/State.lua

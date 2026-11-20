@@ -144,3 +144,12 @@ L.CMD_SINGLE = "Fuerza o quita un solo objetivo"
 L.CMD_HEAL = "Umbral del aviso de cura (0 = desactivado)"
 L.CMD_RESET = "Devuelve el icono a su sitio"
 L.CMD_STATUS = "Clase, rotación y puntos de talento detectados"
+
+-- Navegacion con mando (UI/GamepadNav.lua)
+L["PAD_MOVE"] = "Moverse"
+L["PAD_SELECT"] = "Elegir"
+L["PAD_TOGGLE"] = "Marcar"
+L["PAD_CLOSE"] = "Cerrar"
+L["PAD_BACK"] = "Atrás"
+L["PAD_CLOSE_MENU"] = "Cerrar menú"
+L["PAD_SCROLL"] = "Desplazar"
