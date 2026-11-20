@@ -17,27 +17,27 @@ Highlights the next spell of your rotation on your action bar, for the 9 classes
 ## Screenshots
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/Pirson-s-Addons/.github/main/profile/assets/cf/shots/rg-combat.png" width="640" alt="Your next spell glows on your bar and in its icon"><br>
+<img src="https://media.forgecdn.net/attachments/2243/985/recomendacion3-png.png" width="640" alt="Your next spell glows on your bar and in its icon"><br>
 <sub>Your next spell glows on your bar and in its icon</sub>
 </p>
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/Pirson-s-Addons/.github/main/profile/assets/cf/shots/rg-aura.png" width="640" alt="Ready before the pull: your aura"><br>
+<img src="https://media.forgecdn.net/attachments/2243/987/recomendacion1-png.png" width="640" alt="Ready before the pull: your aura"><br>
 <sub>Ready before the pull: your aura</sub>
 </p>
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/Pirson-s-Addons/.github/main/profile/assets/cf/shots/rg-blessing.png" width="640" alt="Buffs and blessings before the fight"><br>
+<img src="https://media.forgecdn.net/attachments/2243/986/recomendacion2-png.png" width="640" alt="Buffs and blessings before the fight"><br>
 <sub>Buffs and blessings before the fight</sub>
 </p>
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/Pirson-s-Addons/.github/main/profile/assets/cf/shots/rg-editor.png" width="640" alt="Make your own rotation and share it"><br>
+<img src="https://media.forgecdn.net/attachments/2243/983/menu-rotation2-png.png" width="640" alt="Make your own rotation and share it"><br>
 <sub>Make your own rotation and share it</sub>
 </p>
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/Pirson-s-Addons/.github/main/profile/assets/cf/shots/rg-options.png" width="640" alt="Options and heal warning"><br>
+<img src="https://media.forgecdn.net/attachments/2243/984/menu-rotation1-png.png" width="640" alt="Options and heal warning"><br>
 <sub>Options and heal warning</sub>
 </p>
 
