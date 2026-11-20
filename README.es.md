@@ -14,6 +14,33 @@
 
 Resalta en tu barra de acción el siguiente hechizo de tu rotación, para las 9 clases y las 27 ramas de talentos de **WoW Forever**.
 
+## Capturas
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/Pirson-s-Addons/.github/main/profile/assets/cf/shots/rg-combat.png" width="640" alt="Tu siguiente hechizo brilla en la barra y en su icono"><br>
+<sub>Tu siguiente hechizo brilla en la barra y en su icono</sub>
+</p>
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/Pirson-s-Addons/.github/main/profile/assets/cf/shots/rg-aura.png" width="640" alt="Listo antes del combate: tu aura"><br>
+<sub>Listo antes del combate: tu aura</sub>
+</p>
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/Pirson-s-Addons/.github/main/profile/assets/cf/shots/rg-blessing.png" width="640" alt="Bufos y bendiciones antes de pelear"><br>
+<sub>Bufos y bendiciones antes de pelear</sub>
+</p>
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/Pirson-s-Addons/.github/main/profile/assets/cf/shots/rg-editor.png" width="640" alt="Crea tu propia rotación y compártela"><br>
+<sub>Crea tu propia rotación y compártela</sub>
+</p>
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/Pirson-s-Addons/.github/main/profile/assets/cf/shots/rg-options.png" width="640" alt="Opciones y aviso de curación"><br>
+<sub>Opciones y aviso de curación</sub>
+</p>
+
 ## Funciones
 
 - Hace brillar el hechizo en las barras de Blizzard (también la de posturas: auras de paladín, posturas de guerrero, formas de druida, sigilo) y lo muestra en un icono que puedes mover.

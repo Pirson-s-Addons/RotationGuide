@@ -14,6 +14,33 @@
 
 Highlights the next spell of your rotation on your action bar, for the 9 classes and 27 talent trees of **WoW Forever**.
 
+## Screenshots
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/Pirson-s-Addons/.github/main/profile/assets/cf/shots/rg-combat.png" width="640" alt="Your next spell glows on your bar and in its icon"><br>
+<sub>Your next spell glows on your bar and in its icon</sub>
+</p>
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/Pirson-s-Addons/.github/main/profile/assets/cf/shots/rg-aura.png" width="640" alt="Ready before the pull: your aura"><br>
+<sub>Ready before the pull: your aura</sub>
+</p>
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/Pirson-s-Addons/.github/main/profile/assets/cf/shots/rg-blessing.png" width="640" alt="Buffs and blessings before the fight"><br>
+<sub>Buffs and blessings before the fight</sub>
+</p>
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/Pirson-s-Addons/.github/main/profile/assets/cf/shots/rg-editor.png" width="640" alt="Make your own rotation and share it"><br>
+<sub>Make your own rotation and share it</sub>
+</p>
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/Pirson-s-Addons/.github/main/profile/assets/cf/shots/rg-options.png" width="640" alt="Options and heal warning"><br>
+<sub>Options and heal warning</sub>
+</p>
+
 ## Features
 
 - Glows the spell on the Blizzard action bars (stance bar included: paladin auras, warrior stances, druid forms, stealth) and shows it in a movable icon.
