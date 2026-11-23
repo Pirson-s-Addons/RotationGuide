@@ -12,6 +12,7 @@
 ## SavedVariablesPerCharacter: RotationGuideDB
 ## OptionalDeps: SealTimersForever
 ## X-Curse-Project-ID: 1806190
+## X-Wago-ID: 56nboD69
 ## X-License: MIT
 ## X-Copyright: Copyright (c) 2026 Pirson
 ## X-Website: https://github.com/Pirson-s-Addons/RotationGuide
