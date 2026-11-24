@@ -11,6 +11,10 @@ local DEFAULTS = {
     icon = true,
     locked = false,
     forceSingle = false,
+    keybind = true,
+    keybindSize = 14,
+    keybindPos = "BOTTOMRIGHT",
+    iconSize = 48,
     healAt = 40,
     point = { "CENTER", "CENTER", 0, -180 },
 }
@@ -136,6 +140,7 @@ events:RegisterEvent("CHARACTER_POINTS_CHANGED")
 events:RegisterEvent("PLAYER_TALENT_UPDATE")
 events:RegisterEvent("TRAIT_CONFIG_UPDATED")
 events:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
+events:RegisterEvent("UPDATE_BINDINGS")
 events:RegisterEvent("UPDATE_MACROS")
 events:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
 events:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -151,6 +156,11 @@ events:SetScript("OnEvent", function(_, event, arg1, _, arg3)
         for key, value in pairs(DEFAULTS) do
             if RotationGuideDB[key] == nil then RotationGuideDB[key] = value end
         end
+        -- Version 2: la tecla sale activada por defecto (ajustes viejos la tenian apagada)
+        if (RotationGuideDB.schema or 0) < 2 then
+            RotationGuideDB.keybind = true
+            RotationGuideDB.schema = 2
+        end
         -- Tabla propia: DEFAULTS no puede repartir la misma tabla entre personajes
         RotationGuideDB.custom = RotationGuideDB.custom or {}
         ns.db = RotationGuideDB
@@ -161,7 +171,7 @@ events:SetScript("OnEvent", function(_, event, arg1, _, arg3)
         or event == "GROUP_ROSTER_UPDATE" then
         if ns.db then LoadRotation() end
     elseif event == "ACTIONBAR_SLOT_CHANGED" or event == "UPDATE_MACROS"
-        or event == "UPDATE_SHAPESHIFT_FORMS" then
+        or event == "UPDATE_SHAPESHIFT_FORMS" or event == "UPDATE_BINDINGS" then
         ns.Display.Refresh()
     elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
         ns.State.OnCast(arg3)

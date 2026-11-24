@@ -68,6 +68,35 @@ local function CreateGeneral()
         return cb
     end
 
+    -- Deslizador ligado a ns.db[key] (mismo aspecto que el de cura)
+    local function Slider(key, min, max, step, y, labelKey)
+        local name = "RotationGuide_" .. key
+        local s = CreateFrame("Slider", name, panel, "OptionsSliderTemplate")
+        s:SetPoint("TOPLEFT", x + 10, y)
+        s:SetWidth(400)
+        s:SetMinMaxValues(min, max)
+        s:SetValueStep(step)
+        s:SetObeyStepOnDrag(true)
+        _G[name .. "Low"]:SetText(min)
+        _G[name .. "High"]:SetText(max)
+        local function Text()
+            _G[name .. "Text"]:SetText(L[labelKey] .. ": " .. ns.db[key])
+        end
+        s:SetScript("OnValueChanged", function(_, value)
+            value = math.floor(value / step + 0.5) * step
+            if not ns.db or value == ns.db[key] then return end
+            ns.db[key] = value
+            Text()
+            Apply()
+        end)
+        AddTooltip(s, L[labelKey .. "_TIP"])
+        refreshers[#refreshers + 1] = function()
+            s:SetValue(ns.db[key])
+            Text()
+        end
+        return s
+    end
+
     Label(x, -16, L.OPTIONS_TITLE, "GameFontNormalLarge")
 
     local logo = panel:CreateTexture(nil, "ARTWORK")
@@ -85,20 +114,22 @@ local function CreateGeneral()
     local glow = Checkbox("glow", x + 20, -105)
     local icon = Checkbox("icon", x + 20, -129)
     local locked = Checkbox("locked", x + 40, -153)
-    local single = Checkbox("forceSingle", x + 20, -177)
+    local keybind = Checkbox("keybind", x + 40, -177)
+    local single = Checkbox("forceSingle", x + 20, -201)
     refreshers[#refreshers + 1] = function()
         local on = ns.db.enabled
         SetActive(glow, on)
         SetActive(icon, on)
         SetActive(single, on)
         SetActive(locked, on and ns.db.icon)
+        SetActive(keybind, on and ns.db.icon)
     end
-    Line(-212)
+    Line(-236)
 
     -- Aviso de cura
-    Label(x, -228, HEADER .. L.SECTION_HEAL .. "|r", "GameFontNormal")
+    Label(x, -252, HEADER .. L.SECTION_HEAL .. "|r", "GameFontNormal")
     local slider = CreateFrame("Slider", "RotationGuide_HealAt", panel, "OptionsSliderTemplate")
-    slider:SetPoint("TOPLEFT", x + 10, -262)
+    slider:SetPoint("TOPLEFT", x + 10, -286)
     slider:SetWidth(400)
     slider:SetMinMaxValues(0, 100)
     slider:SetValueStep(5)
@@ -120,13 +151,43 @@ local function CreateGeneral()
         slider:SetValue(ns.db.healAt)
         SliderLabel()
     end
-    Line(-302)
+    Line(-326)
+
+    -- Icono: tamano, tecla (tamano y posicion)
+    Label(x, -346, HEADER .. L.SECTION_ICON .. "|r", "GameFontNormal")
+    local iconSize = Slider("iconSize", 24, 100, 4, -378, "OPT_ICONSIZE")
+    local keySize = Slider("keybindSize", 8, 32, 2, -416, "OPT_KEYBINDSIZE")
+    local dropdown = CreateFrame("Frame", "RotationGuide_KeybindPos", panel, "UIDropDownMenuTemplate")
+    dropdown:SetPoint("TOPLEFT", x - 16, -446)
+    UIDropDownMenu_SetWidth(dropdown, 180)
+    UIDropDownMenu_Initialize(dropdown, function(self, level)
+        for _, pos in ipairs(ns.Display.POSITIONS) do
+            local info = UIDropDownMenu_CreateInfo()
+            info.text = L["POS_" .. pos]
+            info.checked = ns.db.keybindPos == pos
+            info.func = function()
+                ns.db.keybindPos = pos
+                UIDropDownMenu_SetText(dropdown, L["POS_" .. pos])
+                Apply()
+            end
+            UIDropDownMenu_AddButton(info, level)
+        end
+    end)
+    AddTooltip(dropdown, L.OPT_KEYBINDPOS_TIP)
+    refreshers[#refreshers + 1] = function()
+        UIDropDownMenu_SetText(dropdown, L["POS_" .. ns.db.keybindPos])
+        local on = ns.db.enabled and ns.db.icon and ns.db.keybind
+        if on then UIDropDownMenu_EnableDropDown(dropdown) else UIDropDownMenu_DisableDropDown(dropdown) end
+        SetActive(iconSize, ns.db.enabled and ns.db.icon)
+        SetActive(keySize, on)
+    end
+    Line(-480)
 
     panel:SetScript("OnShow", Refresh)
 
     local reset = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
     reset:SetSize(180, 26)
-    reset:SetPoint("TOPLEFT", x, -320)
+    reset:SetPoint("TOPLEFT", x, -496)
     reset:SetText(L.DEFAULTS)
     reset:SetScript("OnClick", function()
         for key, value in pairs(ns.DEFAULTS) do

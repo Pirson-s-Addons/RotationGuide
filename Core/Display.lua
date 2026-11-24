@@ -18,7 +18,25 @@ local BARS = {
 }
 
 local buttonsByName = {}
+local keyByName = {}
 local glowing
+
+-- Nombre del comando de enlace de cada barra (para leer su tecla)
+local BINDING = {
+    ActionButton = "ACTIONBUTTON",
+    MultiBarBottomLeftButton = "MULTIACTIONBAR1BUTTON",
+    MultiBarBottomRightButton = "MULTIACTIONBAR2BUTTON",
+    MultiBarRightButton = "MULTIACTIONBAR3BUTTON",
+    MultiBarLeftButton = "MULTIACTIONBAR4BUTTON",
+    MultiBar5Button = "MULTIACTIONBAR5BUTTON",
+    MultiBar6Button = "MULTIACTIONBAR6BUTTON",
+    MultiBar7Button = "MULTIACTIONBAR7BUTTON",
+}
+
+local function KeyText(command)
+    local key = GetBindingKey(command)
+    return key and GetBindingText(key, "", true) or ""
+end
 
 local function SpellNameInSlot(slot)
     if not slot or not Clean(HasAction(slot)) then return nil end
@@ -34,6 +52,7 @@ end
 
 function Display.ScanBars()
     wipe(buttonsByName)
+    wipe(keyByName)
     for _, prefix in ipairs(BARS) do
         for i = 1, 12 do
             local button = _G[prefix .. i]
@@ -41,6 +60,7 @@ function Display.ScanBars()
             if name then
                 buttonsByName[name] = buttonsByName[name] or {}
                 table.insert(buttonsByName[name], button)
+                keyByName[name] = keyByName[name] or KeyText(BINDING[prefix] .. i)
             end
         end
     end
@@ -52,6 +72,7 @@ function Display.ScanBars()
         if name then
             buttonsByName[name] = buttonsByName[name] or {}
             table.insert(buttonsByName[name], button)
+            keyByName[name] = keyByName[name] or KeyText("SHAPESHIFTBUTTON" .. i)
         end
     end
 end
@@ -78,7 +99,15 @@ end
 -- ------------------------------------------
 -- Icono: se arrastra con Mayus pulsada mientras no este bloqueado
 -- ------------------------------------------
-local icon
+local icon, healIcon
+
+-- Posiciones de la tecla dentro del icono y su separacion del borde
+Display.POSITIONS = { "TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT", "BOTTOMLEFT", "BOTTOM", "BOTTOMRIGHT" }
+local ANCHOR = {
+    TOPLEFT = { 2, -2 }, TOP = { 0, -2 }, TOPRIGHT = { -2, -2 },
+    LEFT = { 2, 0 }, CENTER = { 0, 0 }, RIGHT = { -2, 0 },
+    BOTTOMLEFT = { 2, 2 }, BOTTOM = { 0, 2 }, BOTTOMRIGHT = { -2, 2 },
+}
 
 local function CreateIcon()
     icon = CreateFrame("Frame", "RotationGuideIcon", UIParent)
@@ -97,15 +126,26 @@ local function CreateIcon()
     end)
     icon.texture = icon:CreateTexture(nil, "ARTWORK")
     icon.texture:SetAllPoints()
+    icon.keyText = icon:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
+    icon.keyText:SetPoint("BOTTOMRIGHT", -2, 2)
     Display.PlaceIcon()
 end
 
 function Display.PlaceIcon()
     if not icon then return end
+    local size = ns.db.iconSize
+    icon:SetSize(size, size)
+    if healIcon then healIcon:SetSize(size, size) end
     local p = ns.db.point
     icon:ClearAllPoints()
     icon:SetPoint(p[1], UIParent, p[2], p[3], p[4])
     icon:EnableMouse(not ns.db.locked)
+    local key = icon.keyText
+    local font = NumberFontNormal:GetFont()
+    key:SetFont(font, ns.db.keybindSize, "OUTLINE")
+    key:ClearAllPoints()
+    local pos = ns.db.keybindPos
+    key:SetPoint(pos, ANCHOR[pos][1], ANCHOR[pos][2])
 end
 
 -- spellID nil = nada que recomendar
@@ -123,6 +163,7 @@ function Display.Show(spellID)
     if not icon then CreateIcon() end
     if spellID then
         icon.texture:SetTexture(C_Spell.GetSpellTexture(spellID))
+        icon.keyText:SetText(ns.db.keybind and name and keyByName[name] or "")
         icon:Show()
     else
         icon:Hide()
@@ -135,7 +176,6 @@ end
 -- y el resultado secreto va directo a SetAlpha, que si lo acepta.
 -- ------------------------------------------
 local healCurve, healCurveAt
-local healIcon
 local healGlowing
 
 local function HealCurve()
@@ -177,7 +217,7 @@ end
 -- Icono de cura encima del de rotacion: cuando aparece, lo tapa
 local function CreateHealIcon()
     healIcon = CreateFrame("Frame", "RotationGuideHealIcon", UIParent)
-    healIcon:SetSize(48, 48)
+    healIcon:SetSize(ns.db.iconSize, ns.db.iconSize)
     healIcon:SetFrameStrata("HIGH")
     healIcon:SetFrameLevel(20)
     healIcon:EnableMouse(false)
