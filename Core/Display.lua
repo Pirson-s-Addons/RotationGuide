@@ -75,28 +75,55 @@ local function Glow(name, on)
     end
 end
 
+-- Tecla del primer boton de la barra con ese hechizo; Blizzard ya la abrevia
+-- en button.HotKey y pone RANGE_INDICATOR cuando no hay tecla
+local function KeyFor(name)
+    for _, button in ipairs(buttonsByName[name] or {}) do
+        local text = button.HotKey and Clean(button.HotKey:GetText())
+        if text and text ~= "" and text ~= RANGE_INDICATOR then return text end
+    end
+    return ""
+end
+
+local function AddKeybind(frame)
+    frame.keybind = frame:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
+    frame.keybind:SetPoint("TOPRIGHT", -3, -3)
+end
+
+local function ShowKey(frame, name)
+    frame.keybind:SetText(ns.db.keybind and name and KeyFor(name) or "")
+end
+
 -- ------------------------------------------
--- Icono: se arrastra con Mayus pulsada mientras no este bloqueado
+-- Icono: desbloqueado (/rg unlock) se ve siempre y se arrastra, como DR Tracker
 -- ------------------------------------------
 local icon
+local unlocked = false -- solo esta sesion: al entrar al juego siempre bloqueado
+local SAMPLE = "Interface\\Icons\\INV_Misc_QuestionMark"
 
 local function CreateIcon()
     icon = CreateFrame("Frame", "RotationGuideIcon", UIParent)
     icon:SetSize(48, 48)
     icon:SetFrameStrata("HIGH")
     icon:SetMovable(true)
-    icon:EnableMouse(true)
+    icon:SetClampedToScreen(true)
     icon:RegisterForDrag("LeftButton")
-    icon:SetScript("OnDragStart", function(self)
-        if not ns.db.locked and IsShiftKeyDown() then self:StartMoving() end
-    end)
+    icon:SetScript("OnDragStart", icon.StartMoving)
     icon:SetScript("OnDragStop", function(self)
         self:StopMovingOrSizing()
         local point, _, relative, x, y = self:GetPoint()
         ns.db.point = { point, relative, x, y }
     end)
+    icon.background = icon:CreateTexture(nil, "BACKGROUND")
+    icon.background:SetPoint("TOPLEFT", -4, 4)
+    icon.background:SetPoint("BOTTOMRIGHT", 4, -4)
+    icon.background:SetColorTexture(0.77, 0.5, 0.95, 0.35)
+    icon.label = icon:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    icon.label:SetPoint("BOTTOM", icon, "TOP", 0, 6)
+    icon.label:SetText(ns.L.DRAG_HINT)
     icon.texture = icon:CreateTexture(nil, "ARTWORK")
     icon.texture:SetAllPoints()
+    AddKeybind(icon)
     Display.PlaceIcon()
 end
 
@@ -105,7 +132,18 @@ function Display.PlaceIcon()
     local p = ns.db.point
     icon:ClearAllPoints()
     icon:SetPoint(p[1], UIParent, p[2], p[3], p[4])
-    icon:EnableMouse(not ns.db.locked)
+    icon:EnableMouse(unlocked)
+    icon.background:SetShown(unlocked)
+    icon.label:SetShown(unlocked)
+end
+
+function Display.IsUnlocked() return unlocked end
+
+function Display.SetUnlocked(on)
+    unlocked = on
+    if not icon then CreateIcon() end
+    Display.PlaceIcon()
+    Display.Show(ns.nextSpell)
 end
 
 -- spellID nil = nada que recomendar
@@ -116,17 +154,18 @@ function Display.Show(spellID)
         if name and ns.db.glow then Glow(name, true) end
         glowing = name
     end
-    if not ns.db.icon then
+    if not ns.db.icon and not unlocked then
         if icon then icon:Hide() end
         return
     end
     if not icon then CreateIcon() end
-    if spellID then
-        icon.texture:SetTexture(C_Spell.GetSpellTexture(spellID))
-        icon:Show()
-    else
+    if not spellID and not unlocked then
         icon:Hide()
+        return
     end
+    icon.texture:SetTexture(spellID and C_Spell.GetSpellTexture(spellID) or SAMPLE)
+    ShowKey(icon, name)
+    icon:Show()
 end
 
 -- ------------------------------------------
@@ -183,6 +222,7 @@ local function CreateHealIcon()
     healIcon:EnableMouse(false)
     healIcon.texture = healIcon:CreateTexture(nil, "ARTWORK")
     healIcon.texture:SetAllPoints()
+    AddKeybind(healIcon)
     local border = healIcon:CreateTexture(nil, "OVERLAY")
     border:SetTexture("Interface\\Buttons\\CheckButtonHilight")
     border:SetBlendMode("ADD")
@@ -217,6 +257,7 @@ function Display.ShowHeal(spellID)
         healIcon:SetPoint("CENTER", icon, "CENTER")
     end
     healIcon.texture:SetTexture(C_Spell.GetSpellTexture(spellID))
+    ShowKey(healIcon, name)
     healIcon:SetAlpha(alpha)
     healIcon:Show()
 end

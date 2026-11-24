@@ -30,11 +30,12 @@ Resalta en tu barra de acción el siguiente hechizo de tu rotación, para las 9 
 |---|---|
 | `/rg` | Activa / desactiva |
 | `/rg single` | Fuerza un solo objetivo (ignora las reglas de área) |
-| `/rg icon` · `/rg glow` | Muestra / oculta el icono o el brillo de la barra |
-| `/rg lock` · `/rg reset` | Bloquea el icono (Mayús + arrastrar lo mueve) / lo devuelve a su sitio |
+| `/rg icon` · `/rg glow` · `/rg keybind` | Muestra / oculta el icono, el brillo de la barra o la tecla en el icono |
+| `/rg unlock` · `/rg lock` · `/rg reset` | Desbloquea el icono para arrastrarlo donde quieras / lo bloquea / lo devuelve a su sitio |
 | `/rg heal 40` | Umbral del aviso de cura en % (`/rg heal 0` lo desactiva) |
 | `/rg status` | Clase, rotación, puntos por rama y enemigos contados |
 | `/rg editor` | Abre el editor de rotaciones y perfiles |
+| `/rg options` | Abre los ajustes (*Opciones > AddOns > Rotation Guide > General*) |
 
 ## Instalación
 

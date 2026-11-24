@@ -9,7 +9,7 @@ local DEFAULTS = {
     enabled = true,
     glow = true,
     icon = true,
-    locked = false,
+    keybind = true,
     forceSingle = false,
     healAt = 40,
     point = { "CENTER", "CENTER", 0, -180 },
@@ -126,6 +126,7 @@ events:SetScript("OnEvent", function(_, event, arg1, _, arg3)
         end
         -- Tabla propia: DEFAULTS no puede repartir la misma tabla entre personajes
         RotationGuideDB.custom = RotationGuideDB.custom or {}
+        RotationGuideDB.locked = nil -- el desbloqueo ya no se guarda (antes Mayus + arrastrar)
         ns.db = RotationGuideDB
         ns.class = select(2, UnitClass("player"))
     elseif event == "PLAYER_LOGIN" or event == "SPELLS_CHANGED"
@@ -167,9 +168,11 @@ SlashCmdList.ROTATIONGUIDE = function(message)
     elseif command == "glow" then
         Toggle("glow", L.GLOW_ON, L.GLOW_OFF)
         ns.Display.Refresh()
-    elseif command == "lock" then
-        Toggle("locked", L.LOCKED, L.UNLOCKED)
-        ns.Display.PlaceIcon()
+    elseif command == "keybind" then
+        Toggle("keybind", L.KEYBIND_ON, L.KEYBIND_OFF)
+    elseif command == "lock" or command == "unlock" then
+        ns.Display.SetUnlocked(command == "unlock")
+        Print(command == "unlock" and L.UNLOCKED or L.LOCKED)
     elseif command == "reset" then
         ns.db.point = { unpack(DEFAULTS.point) }
         ns.Display.PlaceIcon()
@@ -180,8 +183,10 @@ SlashCmdList.ROTATIONGUIDE = function(message)
             ns.db.healAt = math.floor(percent)
         end
         Print(ns.db.healAt > 0 and format(L.HEAL_AT, ns.db.healAt) or L.HEAL_OFF)
-    elseif command == "editor" or command == "config" then
+    elseif command == "editor" then
         ns.Editor.Open()
+    elseif command == "options" or command == "config" then
+        ns.Options.Open()
     elseif command == "status" then
         local points = ns.TabPoints(1) .. "/" .. ns.TabPoints(2) .. "/" .. ns.TabPoints(3)
         Print(format(L.STATUS, ns.class or "?", ns.specName or L.NO_ROTATION, points, ns.State.Targets()))

@@ -32,4 +32,5 @@ Data/Shaman.lua
 Data/Druid.lua
 Core/API.lua
 UI/Editor.lua
+UI/Options.lua
 Core/Init.lua

@@ -30,11 +30,12 @@ Highlights the next spell of your rotation on your action bar, for the 9 classes
 |---|---|
 | `/rg` | Turn on / off |
 | `/rg single` | Force single target (ignore AoE rules) |
-| `/rg icon` · `/rg glow` | Show / hide the icon or the bar glow |
-| `/rg lock` · `/rg reset` | Lock the icon (Shift + drag moves it) / move it back |
+| `/rg icon` · `/rg glow` · `/rg keybind` | Show / hide the icon, the bar glow or the keybind on the icon |
+| `/rg unlock` · `/rg lock` · `/rg reset` | Unlock the icon to drag it anywhere / lock it / move it back |
 | `/rg heal 40` | Heal warning threshold in % (`/rg heal 0` turns it off) |
 | `/rg status` | Class, rotation, points per tree and enemies counted |
 | `/rg editor` | Opens the rotation and profile editor |
+| `/rg options` | Opens the settings (*Options > AddOns > Rotation Guide > General*) |
 
 ## Installation
 

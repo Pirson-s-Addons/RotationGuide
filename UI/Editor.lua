@@ -880,6 +880,7 @@ end)
 if Settings and Settings.RegisterCanvasLayoutCategory then
     category = Settings.RegisterCanvasLayoutCategory(panel, "Rotation Guide")
     Settings.RegisterAddOnCategory(category)
+    Editor.category = category -- UI/Options.lua cuelga de aqui
 else
     panel:SetSize(780, 600)
     panel:SetPoint("CENTER")
