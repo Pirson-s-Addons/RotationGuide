@@ -172,3 +172,6 @@ L.POS_RIGHT = "Right"
 L.POS_BOTTOMLEFT = "Bottom left"
 L.POS_BOTTOM = "Bottom"
 L.POS_BOTTOMRIGHT = "Bottom right"
+
+L.ICON_DRAG_TIP = "Shift + drag to move it."
+L.ICON_LOCK_TIP = "Lock it in Options > General so it lets clicks through."

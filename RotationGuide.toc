@@ -1,5 +1,5 @@
 ## Interface: 16001
-## Version: 1.05
+## Version: 1.06
 ## Author: Pirson
 ## IconTexture: Interface\AddOns\RotationGuide\img\logo_rg
 ## Title: |cffd597ffRotation Guide|r

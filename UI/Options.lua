@@ -156,38 +156,70 @@ local function CreateGeneral()
     -- Icono: tamano, tecla (tamano y posicion)
     Label(x, -346, HEADER .. L.SECTION_ICON .. "|r", "GameFontNormal")
     local iconSize = Slider("iconSize", 24, 100, 4, -378, "OPT_ICONSIZE")
-    local keySize = Slider("keybindSize", 8, 32, 2, -416, "OPT_KEYBINDSIZE")
-    local dropdown = CreateFrame("Frame", "RotationGuide_KeybindPos", panel, "UIDropDownMenuTemplate")
-    dropdown:SetPoint("TOPLEFT", x - 16, -446)
-    UIDropDownMenu_SetWidth(dropdown, 180)
-    UIDropDownMenu_Initialize(dropdown, function(self, level)
-        for _, pos in ipairs(ns.Display.POSITIONS) do
-            local info = UIDropDownMenu_CreateInfo()
-            info.text = L["POS_" .. pos]
-            info.checked = ns.db.keybindPos == pos
-            info.func = function()
-                ns.db.keybindPos = pos
-                UIDropDownMenu_SetText(dropdown, L["POS_" .. pos])
-                Apply()
-            end
-            UIDropDownMenu_AddButton(info, level)
-        end
-    end)
-    AddTooltip(dropdown, L.OPT_KEYBINDPOS_TIP)
-    refreshers[#refreshers + 1] = function()
-        UIDropDownMenu_SetText(dropdown, L["POS_" .. ns.db.keybindPos])
-        local on = ns.db.enabled and ns.db.icon and ns.db.keybind
-        if on then UIDropDownMenu_EnableDropDown(dropdown) else UIDropDownMenu_DisableDropDown(dropdown) end
-        SetActive(iconSize, ns.db.enabled and ns.db.icon)
-        SetActive(keySize, on)
+    local keySize = Slider("keybindSize", 8, 32, 2, -428, "OPT_KEYBINDSIZE")
+    iconSize:SetWidth(300)
+    keySize:SetWidth(300)
+
+    -- Muestra como en DR Tracker Forever: el icono a su tamano real con la tecla, y un
+    -- punto en cada esquina y lado para elegir donde va la tecla
+    local caption = Label(x + 360, -350, L.OPT_KEYBINDPOS, "GameFontHighlightSmall")
+    local holder = CreateFrame("Frame", nil, panel)
+    holder:SetSize(112, 112)
+    holder:SetPoint("TOP", caption, "BOTTOM", 0, -6)
+    local sample = CreateFrame("Frame", nil, holder)
+    sample:SetPoint("CENTER")
+    local tex = sample:CreateTexture(nil, "ARTWORK")
+    tex:SetAllPoints()
+    local key = sample:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
+    key:SetText("1")
+    local dots = {}
+    for _, pos in ipairs(ns.Display.POSITIONS) do
+        local dot = CreateFrame("CheckButton", nil, holder, "UIRadioButtonTemplate")
+        dot:SetPoint("CENTER", sample, pos)
+        dot:SetFrameLevel(sample:GetFrameLevel() + 2)
+        dot:SetScript("OnClick", function()
+            ns.db.keybindPos = pos
+            Refresh()
+            Apply()
+        end)
+        dot:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(L.OPT_KEYBINDPOS .. ": " .. L["POS_" .. pos])
+            GameTooltip:AddLine(L.OPT_KEYBINDPOS_TIP, 1, 1, 1, true)
+            GameTooltip:Show()
+        end)
+        dot:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        dots[pos] = dot
     end
-    Line(-480)
+    local function UpdateSample()
+        if not ns.db then return end
+        sample:SetSize(ns.db.iconSize, ns.db.iconSize)
+        tex:SetTexture(ns.Display.SampleTexture())
+        ns.Display.StyleKey(key)
+        key:SetShown(ns.db.keybind)
+        local on = ns.db.enabled and ns.db.icon and ns.db.keybind
+        for pos, dot in pairs(dots) do
+            dot:SetChecked(pos == ns.db.keybindPos)
+            dot:SetEnabled(on)
+        end
+        holder:SetAlpha((ns.db.enabled and ns.db.icon) and 1 or 0.5)
+        caption:SetAlpha(on and 1 or 0.5)
+    end
+    -- Los deslizadores cambian la muestra al momento
+    iconSize:HookScript("OnValueChanged", UpdateSample)
+    keySize:HookScript("OnValueChanged", UpdateSample)
+    refreshers[#refreshers + 1] = function()
+        UpdateSample()
+        SetActive(iconSize, ns.db.enabled and ns.db.icon)
+        SetActive(keySize, ns.db.enabled and ns.db.icon and ns.db.keybind)
+    end
+    Line(-486)
 
     panel:SetScript("OnShow", Refresh)
 
     local reset = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
     reset:SetSize(180, 26)
-    reset:SetPoint("TOPLEFT", x, -496)
+    reset:SetPoint("TOPLEFT", x, -502)
     reset:SetText(L.DEFAULTS)
     reset:SetScript("OnClick", function()
         for key, value in pairs(ns.DEFAULTS) do

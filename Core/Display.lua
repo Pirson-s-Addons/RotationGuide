@@ -124,6 +124,15 @@ local function CreateIcon()
         local point, _, relative, x, y = self:GetPoint()
         ns.db.point = { point, relative, x, y }
     end)
+    -- Desbloqueado (si no, deja pasar el raton): como moverlo y como fijarlo
+    icon:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText("|cffd597ffRotation Guide|r")
+        GameTooltip:AddLine(ns.L.ICON_DRAG_TIP, 1, 1, 1, true)
+        GameTooltip:AddLine(ns.L.ICON_LOCK_TIP, 0.6, 0.6, 0.6, true)
+        GameTooltip:Show()
+    end)
+    icon:SetScript("OnLeave", function() GameTooltip:Hide() end)
     icon.texture = icon:CreateTexture(nil, "ARTWORK")
     icon.texture:SetAllPoints()
     icon.keyText = icon:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
@@ -140,12 +149,21 @@ function Display.PlaceIcon()
     icon:ClearAllPoints()
     icon:SetPoint(p[1], UIParent, p[2], p[3], p[4])
     icon:EnableMouse(not ns.db.locked)
-    local key = icon.keyText
+    Display.StyleKey(icon.keyText)
+end
+
+-- Letra, tamano y sitio de la tecla; lo usan el icono y su muestra en Opciones
+function Display.StyleKey(key)
     local font = NumberFontNormal:GetFont()
     key:SetFont(font, ns.db.keybindSize, "OUTLINE")
     key:ClearAllPoints()
     local pos = ns.db.keybindPos
     key:SetPoint(pos, ANCHOR[pos][1], ANCHOR[pos][2])
+end
+
+-- Para la muestra de Opciones: el hechizo que se recomienda ahora o una interrogacion
+function Display.SampleTexture()
+    return ns.nextSpell and C_Spell.GetSpellTexture(ns.nextSpell) or "Interface\\Icons\\INV_Misc_QuestionMark"
 end
 
 -- spellID nil = nada que recomendar

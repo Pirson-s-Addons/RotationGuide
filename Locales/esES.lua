@@ -171,3 +171,6 @@ L.POS_RIGHT = "Derecha"
 L.POS_BOTTOMLEFT = "Abajo izquierda"
 L.POS_BOTTOM = "Abajo"
 L.POS_BOTTOMRIGHT = "Abajo derecha"
+
+L.ICON_DRAG_TIP = "Mayús + arrastrar para moverlo."
+L.ICON_LOCK_TIP = "Bloquéalo en Opciones > General para que deje pasar los clics."
