@@ -3,3 +3,6 @@ package-as: RotationGuide
 manual-changelog:
   filename: CHANGELOG.md
   markup-type: markdown
+
+optional-dependencies:
+  - seal-timers-forever
